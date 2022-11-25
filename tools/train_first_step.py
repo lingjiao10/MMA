@@ -49,7 +49,7 @@ def train(cfg, local_rank, distributed):
 
     # Initialize mixed-precision training
     use_mixed_precision = cfg.DTYPE == "float16"
-    print(cfg.DTYPE)
+    print('cfg.DTYPE: ', cfg.DTYPE)
     amp_opt_level = 'O1' if use_mixed_precision else 'O0'
     model, optimizer = amp.initialize(model, optimizer, opt_level=amp_opt_level)
 
@@ -89,21 +89,24 @@ def train(cfg, local_rank, distributed):
         is_train=True,
         is_distributed=distributed,  # whether using multiple gpus to train
         start_iter=arguments["iteration"],
-        num_gpus=get_world_size(),
-        rank=get_rank()
+        # num_gpus=get_world_size(),
+        # rank=get_rank()
     )
 
     checkpoint_period = cfg.SOLVER.CHECKPOINT_PERIOD  # number of iteration to store parameter value in pth file
 
     # train the model: call function ./maskrcnn_benchmark/engine/trainer.py do_train() function
     do_train(
+        # cfg, # to fit maskrcnn_benchmark github code---  added by wangcong  
         model,
         data_loader,
+        # None, #dala_loader_val 
         optimizer,
         scheduler,
         checkpointer,
         device,
         checkpoint_period,
+        # None, #test_period
         arguments,
     )
 
@@ -181,12 +184,19 @@ def main():
 
     # if there is more than 1 gpu, set initialization for distribute training
     torch.cuda.set_device(args.local_rank)
-    torch.distributed.init_process_group(
-        backend="nccl", init_method="env://"
-    )
+
     synchronize()
     num_gpus = get_world_size()
     print("I'm using ", num_gpus, " gpus!")
+
+    # wangcong -------------
+    train_distributed = False
+    if num_gpus > 1:
+        torch.distributed.init_process_group(
+            backend="nccl", init_method="env://"
+        )
+        train_distributed = True
+    #-----------------------
 
     cfg.merge_from_file(args.config_file)
     cfg.merge_from_list(args.opts)
@@ -212,7 +222,7 @@ def main():
     logger.info("Running with config:\n{}".format(cfg))
 
     # strat to train the model
-    model = train(cfg, args.local_rank, True)
+    model = train(cfg, args.local_rank, train_distributed)
 
     if not args.skip_test:
         # start to test the trained model

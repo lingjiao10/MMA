@@ -32,7 +32,9 @@ DATASETS:
 DATALOADER:
   SIZE_DIVISIBILITY: 32
 SOLVER:
-  BASE_LR: 0.005 # start learning rate
+  # BASE_LR: 0.005 # start learning rate
+  # BASE_LR: 0.004 # start learning rate USE PAPER SETUP
+  BASE_LR: 0.006 # start learning rate --check
   WEIGHT_DECAY: 0.0001
   GAMMA: 0.1  # learning rate decay
   STEPS: (7500,)
