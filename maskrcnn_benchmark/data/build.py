@@ -40,6 +40,15 @@ def build_dataset(dataset_list, transforms, dataset_catalog, is_train=True, exte
             args["new_classes"] = new_classes
             args["excluded_classes"] = excluded_classes
             args["is_train"] = is_train
+        # wangcong 20221129----------------------
+        if data["factory"] == "IP102Dataset":
+            args["use_difficult"] = not is_train  # during training, do not use difficult
+            args["external_proposal"] = external_proposal  # whether use external proposals
+            args["old_classes"] = old_classes
+            args["new_classes"] = new_classes
+            args["excluded_classes"] = excluded_classes
+            args["is_train"] = is_train
+        #-------------end----------------
         if data["factory"] == "PascalVOCDataset2012":
             args["use_difficult"] = not is_train  # during training, do not use difficult
             args["external_proposal"] = external_proposal  # whether use external proposals
