@@ -6,6 +6,8 @@ import os
 
 class DatasetCatalog(object):
     DATA_DIR = ""
+    # to fit my path wangcong 20221110
+    DATA_DIR = "/home/Datasets"
     DATASETS = {
         "coco_2017_train": {
             "img_dir": "coco/train2017",
@@ -47,26 +49,37 @@ class DatasetCatalog(object):
             "img_dir": "coco/val2014",
             "ann_file": "coco/annotations/person_keypoints_valminusminival2014.json",
         },
+        # wangcong--------------------------------------
         "voc_2007_train": {
-            "data_dir": "data/voc07/VOCdevkit/VOC2007",
+            # "data_dir": "voc/VOC2007",
+            "data_dir": "VOCdevkit/VOC2007",
             "split": "train"
         },
+        "voc_2007_val": {
+            "data_dir": "VOCdevkit/VOC2007",
+            "split": "val"
+        },
+        "voc_2007_test": {
+            "data_dir": "VOCdevkit/VOC2007",
+            "split": "test"
+        },
+        #--------------------------------------------------
         "voc_2007_train_cocostyle": {
             "img_dir": "voc/VOC2007/JPEGImages",
             "ann_file": "voc/VOC2007/Annotations/pascal_train2007.json"
         },
-        "voc_2007_val": {
-            "data_dir": "data/voc07/VOCdevkit/VOC2007",
-            "split": "val"
-        },
+        # "voc_2007_val": {
+        #     "data_dir": "data/voc07/VOCdevkit/VOC2007",
+        #     "split": "val"
+        # },
         "voc_2007_val_cocostyle": {
             "img_dir": "voc/VOC2007/JPEGImages",
             "ann_file": "voc/VOC2007/Annotations/pascal_val2007.json"
         },
-        "voc_2007_test": {
-            "data_dir": "data/voc07/VOCdevkit/VOC2007",
-            "split": "test"
-        },
+        # "voc_2007_test": {
+        #     "data_dir": "data/voc07/VOCdevkit/VOC2007",
+        #     "split": "test"
+        # },
         "voc_2007_test_cocostyle": {
             "img_dir": "voc/VOC2007/JPEGImages",
             "ann_file": "voc/VOC2007/Annotations/pascal_test2007.json"
@@ -105,7 +118,17 @@ class DatasetCatalog(object):
         "cityscapes_fine_instanceonly_seg_test_cocostyle": {
             "img_dir": "cityscapes/images",
             "ann_file": "cityscapes/annotations/instancesonly_filtered_gtFine_test.json"
-        }
+        },
+        #wangcong 20221125 ip102---------------------
+        "ip102_train": {
+            "data_dir": "IP102_v1.1/Detection/VOC2007",
+            "split": "trainval"
+        },
+        "ip102_test": {
+            "data_dir": "IP102_v1.1/Detection/VOC2007",
+            "split": "test"
+        },
+        #---------------end ip102---------------------
     }
 
     @staticmethod
@@ -165,6 +188,19 @@ class DatasetCatalog(object):
                 factory="CompressionDataset",
                 args=args,
             )
+        # wangcong--------------------------------------
+        elif "ip102" in name:
+            data_dir = DatasetCatalog.DATA_DIR
+            attrs = DatasetCatalog.DATASETS[name]
+            args = dict(
+                data_dir=os.path.join(data_dir, attrs["data_dir"]),
+                split=attrs["split"],
+            )
+            return dict(
+                factory="IP102Dataset",
+                args=args,
+            )
+
         raise RuntimeError("Dataset not available: {}".format(name))
 
 
