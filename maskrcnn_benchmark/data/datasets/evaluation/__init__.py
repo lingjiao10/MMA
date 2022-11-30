@@ -25,6 +25,11 @@ def evaluate(dataset, predictions, output_folder, **kwargs):
     elif isinstance(dataset, datasets.PascalVOCDataset):
         print('do voc evaluation')
         return voc_evaluation(**args)
+    # wangcong ---------------
+    elif isinstance(dataset, datasets.IP102Dataset):
+        print('do ip102 evaluation')
+        return voc_evaluation(**args) # use voc method
+    #-------------end----------
     elif isinstance(dataset, datasets.PascalVOCDataset2012):
         return voc_evaluation_inst(**args)
     else:
