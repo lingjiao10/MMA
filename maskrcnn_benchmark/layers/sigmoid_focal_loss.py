@@ -15,6 +15,10 @@ class _SigmoidFocalLoss(Function):
         ctx.gamma = gamma
         ctx.alpha = alpha
 
+        # print("type of logits, targets:", type(logits[0]), type(targets[0]))
+        # print(logits.dtype, targets.dtype)
+        # print("type of gamma, alpha:", type(gamma), type(alpha))
+
         losses = _C.sigmoid_focalloss_forward(
             logits, targets, num_classes, gamma, alpha
         )

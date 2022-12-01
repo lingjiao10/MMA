@@ -11,6 +11,9 @@ from maskrcnn_benchmark.modeling.balanced_positive_negative_sampler import (
 )
 from maskrcnn_benchmark.modeling.utils import cat
 
+from maskrcnn_benchmark.layers import SigmoidFocalLoss
+import torchvision
+
 
 class FastRCNNLossComputation(object):
     """
@@ -23,8 +26,9 @@ class FastRCNNLossComputation(object):
         proposal_matcher, 
         fg_bg_sampler, 
         box_coder, 
+        sigmoid_focal_loss=None,
         cls_agnostic_bbox_reg=False,
-        uce=False,
+        uce=False, #if incremental step
         old_classes=[]
     ):
         """
@@ -39,6 +43,9 @@ class FastRCNNLossComputation(object):
         self.cls_agnostic_bbox_reg = cls_agnostic_bbox_reg
         self.uce = uce
         self.n_old_cl = len(old_classes)
+
+        #wangcong 
+        self.box_cls_loss_func = sigmoid_focal_loss
 
     def match_targets_to_proposals(self, proposal, target):
         match_quality_matrix = boxlist_iou(target, proposal)
@@ -162,7 +169,16 @@ class FastRCNNLossComputation(object):
             classification_loss = F.nll_loss(outputs, labels)
 
         else:
-            classification_loss = F.cross_entropy(class_logits, labels)
+            # classification_loss = F.cross_entropy(class_logits, labels)
+            # wangcong 20221130 change to focal loss
+            if self.box_cls_loss_func is not None:
+                _labels = labels.clone()
+                # print("class_logits.shape, labels.shape: ", class_logits.shape, labels.shape)
+                # print("class_logits, labels: ", class_logits[:10,], labels[:10])
+                # classification_loss = self.box_cls_loss_func(class_logits, labels.clone().int())
+                classification_loss = torchvision.ops.sigmoid_focal_loss(class_logits, F.one_hot(_labels, num_classes=class_logits.shape[1]).float(), reduction='mean')
+            else:
+                classification_loss = F.cross_entropy(class_logits, labels)
 
         # get indices that correspond to the regression targets for the corresponding ground truth labels, to be used
         # with advanced indexing
@@ -179,6 +195,10 @@ class FastRCNNLossComputation(object):
             size_average=False,  # sum
             beta=1,
         )
+
+        # print("box_loss:", box_loss)
+        # print("classification_loss", classification_loss)
+
         box_loss = box_loss / labels.numel()
 
         return classification_loss, box_loss
@@ -200,10 +220,18 @@ def make_roi_box_loss_evaluator(cfg):
 
     cls_agnostic_bbox_reg = cfg.MODEL.CLS_AGNOSTIC_BBOX_REG
 
+    sigmoid_focal_loss = None
+    if cfg.MODEL.FOCAL_LOSS.USE_FOCAL_LOSS:
+        sigmoid_focal_loss = SigmoidFocalLoss(
+            cfg.MODEL.FOCAL_LOSS.LOSS_GAMMA,
+            cfg.MODEL.FOCAL_LOSS.LOSS_ALPHA
+        )
+
     loss_evaluator = FastRCNNLossComputation(
         matcher, 
         fg_bg_sampler, 
         box_coder, 
+        sigmoid_focal_loss,
         cls_agnostic_bbox_reg,
         cfg.INCREMENTAL,
         cfg.MODEL.ROI_BOX_HEAD.NAME_OLD_CLASSES

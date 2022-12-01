@@ -232,6 +232,12 @@ _C.MODEL.ROI_HEADS.NMS = 0.5
 # established for the COCO dataset)
 _C.MODEL.ROI_HEADS.DETECTIONS_PER_IMG = 100
 
+# wangcong---------------------
+_C.MODEL.FOCAL_LOSS = CN()
+_C.MODEL.FOCAL_LOSS.USE_FOCAL_LOSS = False
+_C.MODEL.FOCAL_LOSS.LOSS_GAMMA = 2
+_C.MODEL.FOCAL_LOSS.LOSS_ALPHA = 0.25
+#-------------end--------------
 
 _C.MODEL.ROI_BOX_HEAD = CN()
 _C.MODEL.ROI_BOX_HEAD.FEATURE_EXTRACTOR = "ResNet50Conv5ROIFeatureExtractor"

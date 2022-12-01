@@ -1,4 +1,5 @@
 MODEL:
+  # DEVICE: "cpu"
   META_ARCHITECTURE: "GeneralizedRCNN"
   WEIGHT: "catalog://ImageNetPretrained/MSRA/R-50"
   BACKBONE:
@@ -15,13 +16,15 @@ MODEL:
     EXTERNAL_PROPOSAL: False
   ROI_HEADS:
     USE_FPN: False
+  FOCAL_LOSS: #wangcong
+    USE_FOCAL_LOSS: True
   ROI_BOX_HEAD:
     POOLER_RESOLUTION: 7
     POOLER_SCALES: (0.0625,)
     POOLER_SAMPLING_RATIO: 2
     FEATURE_EXTRACTOR: "ResNet50Conv5ROIFeatureExtractor"
     PREDICTOR: "FastRCNNPredictor"
-    NUM_CLASSES: 20 # total classes : 15 + 1
+    NUM_CLASSES: 20 # total classes : 19 + 1
     NAME_OLD_CLASSES: []
     NAME_NEW_CLASSES: ["aeroplane", "bicycle", "bird", "boat", "bottle", "bus", "car", "cat", "chair", "cow", "diningtable", "dog",
                        "horse", "motorbike", "person", "pottedplant", "sheep", "sofa", "train"]
@@ -32,9 +35,9 @@ DATASETS:
 DATALOADER:
   SIZE_DIVISIBILITY: 32
 SOLVER:
-  # BASE_LR: 0.005 # start learning rate
+  BASE_LR: 0.005 # start learning rate
   # BASE_LR: 0.004 # start learning rate USE PAPER SETUP
-  BASE_LR: 0.006 # start learning rate --check
+  # BASE_LR: 0.006 # start learning rate --check
   WEIGHT_DECAY: 0.0001
   GAMMA: 0.1  # learning rate decay
   STEPS: (7500,)
