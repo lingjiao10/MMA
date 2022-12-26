@@ -17,7 +17,7 @@ MODEL:
   ROI_HEADS:
     USE_FPN: False
   FOCAL_LOSS: #wangcong
-    USE_FOCAL_LOSS: True
+    USE_FOCAL_LOSS: False
   ROI_BOX_HEAD:
     POOLER_RESOLUTION: 7
     POOLER_SCALES: (0.0625,)
@@ -37,7 +37,7 @@ DATALOADER:
 SOLVER:
   BASE_LR: 0.005 # start learning rate
   # BASE_LR: 0.004 # start learning rate USE PAPER SETUP
-  # BASE_LR: 0.006 # start learning rate --check
+  # BASE_LR: 0.01 # start learning rate --check
   WEIGHT_DECAY: 0.0001
   GAMMA: 0.1  # learning rate decay
   STEPS: (7500,)
@@ -49,3 +49,4 @@ TEST: # testing strategy
   IMS_PER_BATCH: 4 # number of images per batch
 
 OUTPUT_DIR: "output/19-1/LR005_BS4_FILOD" # path to store the result
+TENSORBOARD_DIR: "output/19-1/LR005_BS4_FILOD" # path to store tensorboard info

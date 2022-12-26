@@ -1,0 +1,71 @@
+MODEL:
+  META_ARCHITECTURE: "GeneralizedRCNN"
+  WEIGHT: "catalog://ImageNetPretrained/MSRA/R-50"
+  BACKBONE:
+    CONV_BODY: "R-50-C4"
+  RESNETS:
+    BACKBONE_OUT_CHANNELS: 1024
+  RPN:
+    USE_FPN: False
+    ANCHOR_STRIDE: (16,)
+    PRE_NMS_TOP_N_TRAIN: 12000
+    PRE_NMS_TOP_N_TEST: 6000
+    POST_NMS_TOP_N_TRAIN: 2000
+    POST_NMS_TOP_N_TEST: 1000
+    EXTERNAL_PROPOSAL: False
+  ROI_HEADS:
+    USE_FPN: False
+  FOCAL_LOSS: #wangcong
+    USE_FOCAL_LOSS: False
+    LOSS_GAMMA: 2
+    LOSS_ALPHA: 0.25
+  ROI_BOX_HEAD:
+    POOLER_RESOLUTION: 7
+    POOLER_SCALES: (0.0625,)
+    POOLER_SAMPLING_RATIO: 2
+    FEATURE_EXTRACTOR: "ResNet50Conv5ROIFeatureExtractor"
+    PREDICTOR: "FastRCNNPredictor"
+    NUM_CLASSES: 51 # total classes : 50 + 1(bg)
+    NAME_OLD_CLASSES: []
+    NAME_NEW_CLASSES: ['Rice leaf roller', 'Rice leaf caterpillar', 'Paddy stem maggot', 'Asiatic rice borer', 'Yellow rice borer', 
+    'Rice gall midge', 'Rice stemfly', 'Brown plant hopper', 'White backed plant hopper', 'Small brown plant hopper', 
+    'Rice water weevil', 'Rice leafhopper', 'Grain spreader thrips', 'Rice shell pest', 'Grub', 
+    'Mole cricket', 'Wireworm', 'White margined moth', 'Black cutworm', 'Large cutworm', 
+    'Yellow cutworm', 'Red spider', 'Corn borer', 'Army worm', 'Aphids', 
+    'Potosiabre vitarsis', 'Peach borer', 'English grain aphid', 'Green bug', 'Bird cherry-oataphid', 
+    'Wheat blossom midge', 'Penthaleus major', 'Longlegged spider mite', 'Wheat phloeothrips', 'Wheat sawfly', 
+    'Cerodonta denticornis', 'Beet fly', 'Flea beetle', 'Cabbage army worm', 'Beet army worm', 
+    'Beet spot flies', 'Meadow moth', 'Beet weevil', 'Sericaorient alismots chulsky', 'Alfalfa weevil', 
+    'Flax budworm', 'Alfalfa plant bug', 'Tarnished plant bug', 'Locustoidea', 'Lytta polita'
+    ] # 50
+    NAME_EXCLUDED_CLASSES: ['Legume blister beetle', 'Blister beetle', 'Therioaphis maculata buckton', 'Odontothrips loti', 'Thrips', 
+    'Alfalfa seed chalcid', 'Pieris canidia', 'Apolygus lucorum', 'Limacodidae', 'Oides decempunctata', 
+    'Pseudococcus comstocki kuwana', 'Parathrene regalis', 'Ampelophaga', 'Lycorma delicatula', 'Xylotrechus', 
+    'Cicadella viridis', 'Miridae', 'Trialeurodes vaporariorum', 'Erythroneura apicalis', 'Papilio xuthus', 
+    'Panonchus citri mcgregor', 'Icerya purchasi maskell', 'Unaspis yanonensis', 'Ceroplastes rubens', 'Chrysomphalus aonidum', 
+    'Nipaecoccus vastalor', 'Aleurocanthus spiniferus', 'Tetradacus c bactrocera minax', 'Dacus dorsalis(hendel)', 'Bactrocera tsuneonis', 
+    'Prodenia litura', 'Adristyrannus', 'Phyllocnistis citrella stainton', 'Toxoptera citricidus', 'Toxoptera aurantii', 
+    'Aphis citricola vander goot', 'Scirtothrips dorsalis hood', 'Dasineura sp', 'Lawana imitata melichar', 'Salurnis marginella guerr', 
+    'Deporaus marginatus pascoe', 'Chlumetia transversa', 'Mango flat beak leafhopper', 'Rhytidodera bowrinii white', 'Sternochetus frigidus', 
+    'Cicadellidae'] #46
+DATASETS:
+  TRAIN: ("ip102_train",)
+  TEST: ("ip102_test",)
+DATALOADER:
+  SIZE_DIVISIBILITY: 32
+SOLVER:
+  BASE_LR: 0.005 # start learning rate
+  # BASE_LR: 0.004 # start learning rate USE PAPER SETUP
+  # BASE_LR: 0.01 # start learning rate --check
+  WEIGHT_DECAY: 0.0001
+  GAMMA: 0.1  # learning rate decay
+  STEPS: (20000,25000,)
+  MAX_ITER: 30000 # number of iteration
+  CHECKPOINT_PERIOD: 6000 # number of iteration to generate check point
+  IMS_PER_BATCH: 4 # number of images per batch
+  MOMENTUM: 0.9
+TEST: # testing strategy
+  IMS_PER_BATCH: 4 # number of images per batch
+
+OUTPUT_DIR: "output/ip102/50-46/LR005_CE_BS4_FILOD" # path to store the result
+TENSORBOARD_DIR: "output/ip102/50-46/LR005_CE_BS4_FILOD" # path to store the result

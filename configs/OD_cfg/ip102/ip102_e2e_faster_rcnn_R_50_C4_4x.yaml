@@ -16,7 +16,7 @@ MODEL:
   ROI_HEADS:
     USE_FPN: False
   FOCAL_LOSS: #wangcong
-    USE_FOCAL_LOSS: True
+    USE_FOCAL_LOSS: False
     LOSS_GAMMA: 2
     LOSS_ALPHA: 0.25
   ROI_BOX_HEAD:
@@ -56,15 +56,16 @@ DATALOADER:
 SOLVER:
   BASE_LR: 0.005 # start learning rate
   # BASE_LR: 0.004 # start learning rate USE PAPER SETUP
-  # BASE_LR: 0.006 # start learning rate --check
+  # BASE_LR: 0.01 # start learning rate --check
   WEIGHT_DECAY: 0.0001
   GAMMA: 0.1  # learning rate decay
-  STEPS: (7500,)
-  MAX_ITER: 10000 # number of iteration
-  CHECKPOINT_PERIOD: 2500 # number of iteration to generate check point
+  STEPS: (20000,25000,)
+  MAX_ITER: 30000 # number of iteration
+  CHECKPOINT_PERIOD: 6000 # number of iteration to generate check point
   IMS_PER_BATCH: 4 # number of images per batch
   MOMENTUM: 0.9
 TEST: # testing strategy
   IMS_PER_BATCH: 4 # number of images per batch
 
-OUTPUT_DIR: "output/ip102/96-0/LR005_BS4_FILOD" # path to store the result
+OUTPUT_DIR: "output/ip102/96-0/LR005_CE_BS4_FILOD" # path to store the result
+TENSORBOARD_DIR: "output/ip102/96-0/LR005_CE_BS4_FILOD" # path to store the result
