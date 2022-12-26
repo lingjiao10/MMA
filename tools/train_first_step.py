@@ -96,6 +96,7 @@ def train(cfg, local_rank, distributed):
     checkpoint_period = cfg.SOLVER.CHECKPOINT_PERIOD  # number of iteration to store parameter value in pth file
 
     # train the model: call function ./maskrcnn_benchmark/engine/trainer.py do_train() function
+    summary_writer = SummaryWriter(log_dir=cfg.TENSORBOARD_DIR)
     do_train(
         # cfg, # to fit maskrcnn_benchmark github code---  added by wangcong  
         model,
@@ -108,6 +109,7 @@ def train(cfg, local_rank, distributed):
         checkpoint_period,
         # None, #test_period
         arguments,
+        summary_writer
     )
 
     return model

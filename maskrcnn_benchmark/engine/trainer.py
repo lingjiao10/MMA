@@ -123,12 +123,18 @@ def do_train(
             if summary_writer:
                 loss_global_avg = meters.loss.global_avg
                 loss_median = meters.loss.median
-                loss_mask = meters.loss_mask.global_avg
+                # loss_mask = meters.loss_mask.global_avg
                 # print('loss global average: {0}, loss median: {1}'.format(meters.loss.global_avg, meters.loss.median))
                 summary_writer.add_scalar('train_loss_global_avg', loss_global_avg, iteration)
                 summary_writer.add_scalar('train_loss_median', loss_median, iteration)
                 summary_writer.add_scalar('train_loss_raw', losses_reduced, iteration)
-                summary_writer.add_scalar('train_loss_mask', loss_mask, iteration)
+                # summary_writer.add_scalar('train_loss_mask', loss_mask, iteration)
+
+                summary_writer.add_scalar('classifier_loss', meters.loss_classifier.global_avg, iteration)
+                summary_writer.add_scalar('box_reg_loss', meters.loss_box_reg.global_avg, iteration)
+                summary_writer.add_scalar('rpn_classloss', meters.loss_objectness.global_avg, iteration)
+                summary_writer.add_scalar('rpn_regloss', meters.loss_rpn_box_reg.global_avg, iteration)
+
         if iteration % checkpoint_period == 0:
             checkpointer.save("model_{:07d}".format(iteration), **arguments)
         if iteration == max_iter:
